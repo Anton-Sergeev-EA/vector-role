@@ -1,0 +1,23 @@
+name: Validate role
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: vector
+      - name: Install tools
+        run: pip install ansible-core==2.16.14 ansible-lint==24.12.2 ansible-compat==24.10.0
+      - name: Validate role
+        env:
+          ANSIBLE_ROLES_PATH: ${{ github.workspace }}
+        run: |
+          cd vector
+          ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+          ansible-lint --offline .

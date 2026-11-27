@@ -1,0 +1,6 @@
+---
+- name: Test vector role
+  hosts: all
+  become: true
+  roles:
+    - vector

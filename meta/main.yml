@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Anton Sergeev
+  namespace: anton_sergeev_ea
+  role_name: vector
+  description: Install and configure Vector
+  license: MIT
+  min_ansible_version: '2.16'
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+    - name: Debian
+      versions:
+        - bookworm
+dependencies: []

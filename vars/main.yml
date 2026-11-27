@@ -1,0 +1,3 @@
+---
+vector_package_arch: amd64
+vector_binary_path: /usr/bin/vector

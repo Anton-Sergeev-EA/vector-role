@@ -1,0 +1,38 @@
+---
+- name: Require Debian family on amd64
+  ansible.builtin.assert:
+    that:
+      - ansible_os_family == 'Debian'
+      - ansible_architecture == 'x86_64'
+- name: Download pinned Vector package
+  ansible.builtin.get_url:
+    url: https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_{{ vector_package_arch
+      }}.deb
+    checksum: sha256:{{ vector_package_checksum }}
+    dest: /var/cache/vector_{{ vector_version }}_{{ vector_package_arch }}.deb
+    mode: '0644'
+- name: Install Vector
+  ansible.builtin.apt:
+    deb: /var/cache/vector_{{ vector_version }}_{{ vector_package_arch }}.deb
+  when: not ansible_check_mode
+- name: Check whether Vector is installed
+  ansible.builtin.stat:
+    path: '{{ vector_binary_path }}'
+  register: vector_binary
+- name: Configure installed Vector
+  when: vector_binary.stat.exists
+  block:
+    - name: Configure Vector demo pipeline to ClickHouse
+      ansible.builtin.template:
+        src: vector.yaml.j2
+        dest: /etc/vector/vector.yaml
+        owner: root
+        group: vector
+        mode: '0640'
+        validate: '{{ vector_binary_path }} validate --no-environment --config-yaml %s'
+      notify: Restart Vector
+    - name: Enable and start Vector
+      ansible.builtin.systemd_service:
+        name: vector
+        enabled: true
+        state: started

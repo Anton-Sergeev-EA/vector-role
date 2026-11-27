@@ -1,0 +1,24 @@
+data_dir: /var/lib/vector
+sources:
+  demo:
+    type: demo_logs
+    format: json
+    interval: {{ vector_demo_interval }}
+transforms:
+  normalize:
+    type: remap
+    inputs: [demo]
+    source: |
+      . = {"message": string!(.message), "timestamp": format_timestamp!(now(), format: "%Y-%m-%d %H:%M:%S%.3f")}
+sinks:
+  clickhouse:
+    type: clickhouse
+    inputs: [normalize]
+    endpoint: {{ vector_clickhouse_endpoint | to_json }}
+    database: {{ vector_clickhouse_database | to_json }}
+    table: {{ vector_clickhouse_table | to_json }}
+    skip_unknown_fields: true
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: block

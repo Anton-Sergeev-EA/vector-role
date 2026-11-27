@@ -1,0 +1,7 @@
+---
+vector_version: 0.46.1
+vector_package_checksum: 16c669f2eb9cec1467b6f8ac610dfc58c135627f3d4177e5a51811d8e557472b
+vector_clickhouse_endpoint: http://127.0.0.1:8123
+vector_clickhouse_database: logs
+vector_clickhouse_table: events
+vector_demo_interval: 5
